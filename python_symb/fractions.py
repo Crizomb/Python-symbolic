@@ -39,6 +39,7 @@ class Fractions:
         """from frac(a, 1) return a."""
         if self.den == 1:
             return self.num
+            
     def simplify_nested(self, rec=True):
         """simplify nested fractions.
         Fractions(1, Fractions(1, Fractions(1, Fractions(1, 2)))) -> Fractions(2, 1)
