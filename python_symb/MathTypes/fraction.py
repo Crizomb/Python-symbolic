@@ -1,11 +1,11 @@
 from __future__ import annotations
 from typing import Iterable, Generator
-from tools import gcd
+from python_symb.IndependantTools.tools import gcd
 
 
 class Fraction:
     """
-    Should represent a fraction not a division
+    Represent a fraction a/b with a and b elements of a ring (support +, -, *, /)
     """
     __slots__ = ['num', 'den']
     __match_args__ = ("num", "den")
@@ -36,7 +36,7 @@ class Fraction:
             # can be completed with others objects that support gcd like polynomials etc...
 
     def simplify_to_num(self):
-        """from frac(a, 1) return a."""
+        """from frac(a, 1) return a """
         if self.den == 1:
             return self.num
     def simplify_nested(self, rec=True):

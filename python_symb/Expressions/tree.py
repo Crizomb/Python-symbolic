@@ -1,14 +1,14 @@
 from __future__ import annotations
 from typing import Iterable, Generator
 from collections import deque
-from parse import update_symbols_dict
+from abc import ABC, abstractmethod
 
 
-class Tree:
+class Tree(ABC):
     """
     Ultra generic Test class. Can be used to represent any Test structure.
 
-    value : value of the node. Can be a binary operator like "+", a ternary operator like "if", a number etc...
+    :param value : value of the node. Can be a binary operator like "+", a ternary operator like "if", a number etc...
 
     depth_first_order : the default order of the node in the depth first traversal. Used to implement the depth_first method.
     0 is pre-order, 1 is in-order (for binary Test), -1 is post-order.
@@ -25,7 +25,7 @@ class Tree:
         self.children = children if children else []
 
     def __repr__(self) -> str:
-        return f'Tree({self.value}, {self.children})' if self.children else f'Leaf({self.value})'
+        return f'Tree({self.value}, {self.children})' if self.children else f'Tree({self.value})'
 
     def height(self) -> int:
         return 1 + max((child.height() for child in self.children), default=0)

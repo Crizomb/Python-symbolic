@@ -1,8 +1,8 @@
 from __future__ import annotations
 from typing import List, Union
-from operator_file import Add, Mul, Min, BinOperator, UnaryOperator
-from symbols import Symbols, Var
-from fraction import Fraction
+from python_symb.MathTypes.operator_file import BinOperator, UnaryOperator
+from python_symb.MathTypes.symbols import Symbols, Var
+from python_symb.MathTypes.fraction import Fraction
 
 x, y = Var('x'), Var('y')
 
@@ -37,6 +37,7 @@ def preprocess(expr: str) -> List:
     :param expr: string expression
     :return: list of symbols and numbers
     """
+    update_symbols_dict()
     return_list = []
     expr = expr.strip()
     expr = expr.replace(' ', '')

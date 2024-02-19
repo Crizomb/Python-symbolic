@@ -1,6 +1,8 @@
 import tkinter as tk
-from expr import Expr, Var
-from parse import update_symbols_dict
+from python_symb.Expressions.expr import Expr
+from python_symb.MathTypes.symbols import Var
+from python_symb.Parsing.parse import update_symbols_dict
+
 
 class Visual:
     def __init__(self):
@@ -93,7 +95,7 @@ class Visual:
         return self.tree_canvas.create_oval(x0, y0, x1, y1, fill=color)
 
     def draw_tree(self, tree, first_x=400, first_y=50, x_offset=250, y_offset=200, radius=30, fact_mult=0.75):
-
+        print(tree)
         children = tree.children
         n = len(children)
         for i in range(n):
