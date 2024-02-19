@@ -1,5 +1,5 @@
 from __future__ import annotations
-# from expr import Expr
+
 
 
 class Symbols:
@@ -18,6 +18,22 @@ class Symbols:
     def __str__(self):
         return self.name
 
+    def __add__(self, other):
+        from python_symb.Expressions.expr import Expr
+        return Expr('+', [self, other])
+
+    def __radd__(self, other):
+        from python_symb.Expressions.expr import Expr
+        return Expr('+', [other, self])
+
+    def __mul__(self, other):
+        from python_symb.Expressions.expr import Expr
+        return Expr('*', [self, other])
+
+    def __rmul__(self, other):
+        from python_symb.Expressions.expr import Expr
+        return Expr('*', [other, self])
+
 
 class Var(Symbols):
     """
@@ -29,6 +45,4 @@ class Var(Symbols):
         super().__init__(name)
         self.__class__.instances.append(self)
 
-    """def __add__(self, other) -> Expr:
-        return Expr('+', [self, other])"""
 
