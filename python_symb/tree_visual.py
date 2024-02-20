@@ -109,6 +109,7 @@ class Visual:
         self.create_circle(first_x, first_y, radius, "red")
         self.tree_canvas.create_text(first_x, first_y, text=str(tree.value))
 
+
 if __name__ == "__main__":
     Visual()
 

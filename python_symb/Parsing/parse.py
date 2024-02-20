@@ -4,7 +4,6 @@ from python_symb.MathTypes.operator_file import BinOperator, UnaryOperator
 from python_symb.MathTypes.symbols import Symbols, Var
 from python_symb.MathTypes.fraction import Fraction
 
-x, y = Var('x'), Var('y')
 
 ParenthesisLeft = Symbols('(')
 ParenthesisRight = Symbols(')')
@@ -103,7 +102,7 @@ def infix_str_to_postfix(expr):
 
 
 if __name__ == "__main__":
-
+    x, y = Var('x'), Var('y')
     expr = "(x+7)*y+sin(24-2*(1-5))"
     prep = preprocess(expr)
     print(prep)

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Dict, Callable
+from typing import Set, Callable
 from python_symb.MathTypes.symbols import Symbols
 
 
@@ -52,11 +52,11 @@ class BinProperties:
     Represent the properties of a binary operator
     """
 
-    def __init__(self, associativity: bool, commutativity: True,
-                 left_distributivity: Dict[str, bool], right_distributivity: Dict[str, bool]):
+    def __init__(self, associative: bool, commutative: True,
+                 left_distributivity: Set[str], right_distributivity: Set[str]):
         """
-        :param associativity: True if the operator is associative
-        :param commutativity: True if the operator is commutative
+        :param associative: True if the operator is associative
+        :param commutative: True if the operator is commutative
         :param left_distributivity: a dictionary of the operators that the current operator distribute over
         :param right_distributivity: a dictionary of the operators that distribute over the current operator
 
@@ -68,10 +68,10 @@ class BinProperties:
         right_distributivity = {'+': True}
         """
 
-        self.associativity = associativity
-        self.commutativity = commutativity
-        self.left_distributivity = left_distributivity
-        self.right_distributivity = right_distributivity
+        self.associative = associative
+        self.commutative = commutative
+        self.left_distributive = left_distributivity
+        self.right_distributive = right_distributivity
 
 
 class BinOperator(Operator):
@@ -92,18 +92,26 @@ class BinOperator(Operator):
         return self.call(left, right)
 
 
+
+
+
+
 """
 Generic operators
 """
+ExpProperties = BinProperties(False, False, set(), set())
+Exp = BinOperator('^', 4, ExpProperties, lambda x, y: x ** y)
 
-AddProperties = BinProperties(True, True, {'*': True}, {'*': True})
-Add = BinOperator('+', 2, AddProperties, lambda x, y: x + y)
+MulProperties = BinProperties(True, True, {'+'}, {'+'})
+Mul = BinOperator('*', 3, MulProperties, lambda x, y: x * y, Exp)
+
+AddProperties = BinProperties(True, True, set(), set())
+Add = BinOperator('+', 2, AddProperties, lambda x, y: x + y, Mul)
 
 
-MulProperties = BinProperties(True, True, {'+': True}, {'+': True})
-Mul = BinOperator('*', 3, MulProperties, lambda x, y: x * y)
+
+
+
 Sin = UnaryOperator('sin', 10, lambda x: x)
-
-Min = BinOperator('-', 2, AddProperties, lambda x, y: x - y)
 
 

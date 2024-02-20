@@ -83,3 +83,6 @@ class Tree(ABC):
             yield tree
 
         yield from aux(self)
+
+
+
