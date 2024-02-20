@@ -1,16 +1,16 @@
 from __future__ import annotations
 
 
-
 class Symbols:
     """
-    All maths things (other than number) that will be parsed need to be of "Symbols" class
+    All maths things (other than integers) that will be parsed need to be of "Symbols" class
     """
-    instances = []
+    instances = {}
 
     def __init__(self, name):
+        assert name not in Symbols.instances, f'Symbol with name {name} already exists'
         self.name = name
-        Symbols.instances.append(self)
+        Symbols.instances[name] = self
 
     def __repr__(self):
         return self.name
@@ -39,10 +39,10 @@ class Var(Symbols):
     """
     variable, like 'x' in x+2
     """
-    instances = []
+    instances = {}
 
     def __init__(self, name):
         super().__init__(name)
-        self.__class__.instances.append(self)
+        self.__class__.instances[name] = self
 
 

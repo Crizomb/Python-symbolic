@@ -7,18 +7,22 @@ class Operator(Symbols):
     """
     Represent an operator, like +, *, sin, anything that can be applied to an expression
     """
-    instances = []
+    instances = {}
 
-    def __init__(self, name: str, precedence: int, call: Callable):
+    def __init__(self, name: str, precedence: int, call: Callable, repeated_op: Operator = None):
         """
         :param name of the operator
         :param precedence: precedence of the operator, higher is better
         :param call: function to apply the operator
+        :param repeated_op: if you repeat the operator what do you get ?
+        for exemple a+a+a+a -> 4*a, the repeated_op of Add is Mul
         """
+
         super().__init__(name)
         self.precedence = precedence
         self.call = call
-        Operator.instances.append(self)
+        self.repeated_op = repeated_op
+        Operator.instances[name] = self
 
     def __repr__(self):
         return f'{self.name}'
@@ -29,11 +33,11 @@ class UnaryOperator(Operator):
     Represent a unary operator, like sin, cos, - etc...
     all operators that take only one argument
     """
-    instances = []
+    instances = {}
 
-    def __init__(self, name: str, precedence: int, call: Callable):
-        UnaryOperator.instances.append(self)
-        super().__init__(name, precedence, call)
+    def __init__(self, name: str, precedence: int, call: Callable, repeated_op: Operator = None):
+        UnaryOperator.instances[name] = self
+        super().__init__(name, precedence, call, repeated_op)
 
     def apply(self, expr):
         return self.call(expr)
@@ -77,11 +81,11 @@ class BinOperator(Operator):
     """
 
     # Used to store all the instances of BinOperator, used in the parser
-    instances = []
+    instances = {}
 
-    def __init__(self, name: str, precedence: int, properties: BinProperties, call: Callable):
-        BinOperator.instances.append(self)
-        super().__init__(name, precedence, call)
+    def __init__(self, name: str, precedence: int, properties: BinProperties, call: Callable, repeated_op: Operator = None ):
+        BinOperator.instances[name] = self
+        super().__init__(name, precedence, call, repeated_op)
         self.properties = properties
 
     def apply(self, left, right):

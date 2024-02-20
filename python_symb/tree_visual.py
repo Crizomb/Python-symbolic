@@ -1,7 +1,6 @@
 import tkinter as tk
 from python_symb.Expressions.expr import Expr
 from python_symb.MathTypes.symbols import Var
-from python_symb.Parsing.parse import update_symbols_dict
 
 
 class Visual:
@@ -72,8 +71,6 @@ class Visual:
             if v not in Var.instances:
                 Var(v)
 
-        # Update the symbols dict
-        update_symbols_dict()
 
 
     def show_tree(self):

@@ -24,6 +24,10 @@ class Tree(ABC):
         self.depth_first_order = depth_first_order
         self.children = children if children else []
 
+    @property
+    def is_leaf(self) -> bool:
+        return not self.children
+
     def __repr__(self) -> str:
         return f'Tree({self.value}, {self.children})' if self.children else f'Tree({self.value})'
 

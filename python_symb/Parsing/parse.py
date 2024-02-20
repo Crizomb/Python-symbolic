@@ -11,14 +11,9 @@ ParenthesisRight = Symbols(')')
 
 Number = Union[int, float, Fraction]
 
-name_to_symbol = {sy.name:sy for sy in Symbols.instances}
+name_to_symbol = Symbols.instances
 
 
-
-
-def update_symbols_dict():
-    global name_to_symbol
-    name_to_symbol = {sy.name:sy for sy in Symbols.instances}
 
 
 """
@@ -37,7 +32,7 @@ def preprocess(expr: str) -> List:
     :param expr: string expression
     :return: list of symbols and numbers
     """
-    update_symbols_dict()
+
     return_list = []
     expr = expr.strip()
     expr = expr.replace(' ', '')
