@@ -85,11 +85,9 @@ class Expr(Tree):
             case Expr(BinOperator() as op, [left, right]):
                 op_name = op.name if not(implicit_mul and op == Mul) else ''
                 if op.precedence < parent_precedence:
-                    print("hehehe")
-                    print(self, op.precedence, parent_precedence)
-                    return f"({left.to_infix_str(op.precedence)}{op_name}{right.to_infix_str(op.precedence)})"
+                    return f"({left.to_infix_str(op.precedence, implicit_mul)}{op_name}{right.to_infix_str(op.precedence, implicit_mul)})"
                 else:
-                    return f"{left.to_infix_str(op.precedence)}{op_name}{right.to_infix_str(op.precedence)}"
+                    return f"{left.to_infix_str(op.precedence, implicit_mul)}{op_name}{right.to_infix_str(op.precedence, implicit_mul)}"
 
 
 
@@ -123,8 +121,18 @@ class Expr(Tree):
         other_expr = other if isinstance(other, Expr) else Expr(other)
         return Expr.bin_op_constructor(other_expr, self, Mul)
 
+    def __pow__(self, other):
+        other_expr = other if isinstance(other, Expr) else Expr(other)
+        return Expr.bin_op_constructor(self, other_expr, Exp)
+
+    def __neg__(self):
+        return Expr(Mul, [Expr(-1), self])
+
     def __sub__(self, other):
-        return Expr.bin_op_constructor(self, other, Min)
+        return self + (-other)
+
+    def __rsub__(self, other):
+        return other + (-self)
 
     def __hash__(self):
         """
@@ -155,52 +163,41 @@ class Expr(Tree):
         """temporary"""
         return self.bad_eq(other)
 
+    def delete_node(self, node: Expr) -> Expr:
+        """
+        return a new expression without all occurences of the node (with the equality defined by the __eq__ method)
 
-def test():
-    x, y = var('x'), var('y')
-    a, b = var('a'), var('b')
-    def test1():
-        expr1 = x + y
-        expr2 = 5+x
-        print(expr1 + expr2)
+        :param node: node to delete everywhere
+        """
+        match self:
 
+            case Expr(value) if self.is_leaf:
+                if self == node:
+                    raise "Cannot delete a leaf node, don't"
+                else:
+                    return self
 
-    def test2():
-        from python_symb.MathTypes.operator_file import Sin
-        expr = Sin(x+y)
-        print(expr)
+            case Expr(UnaryOperator() as op, [child]):
+                if child == node:
+                    raise ValueError("Cannot delete a node that is the child of a unary operator, don't.")
+                else:
+                    return Expr(op, [child.delete_node(node)])
 
-    def test_eq():
-        expr = x + y + 3
-        expr2 = 3 + x + y
-        print("----")
-        print(expr)
-        print(expr2)
-        print(expr == expr2)
+            case Expr(BinOperator() as op, [left, right]):
+                if left == node:
+                    return right
+                elif right == node:
+                    return left
+                else:
+                    return Expr(op, [left.delete_node(node), right.delete_node(node)])
 
-    def test_return_to_string():
-        expr = x+y
-        new_expr = 5*expr
-        print(new_expr)
-        print(f"new_expr: {new_expr.to_infix_str()}")
-
-        expr2 = x*x*x + y*y*y
-        print(expr2)
-        print(f"expr2: {expr2.to_infix_str()}")
+            case _:
+                raise ValueError(f'Invalid type: {type(self)}')
 
 
-    print("test1")
-    test1()
-    print("test2")
-    test2()
-    print("test_eq")
-    test_eq()
-    print("test_return_to_string")
-    test_return_to_string()
 
 
-if __name__ == '__main__':
-    test()
+
 
 
 

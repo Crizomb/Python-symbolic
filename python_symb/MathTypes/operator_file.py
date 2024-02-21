@@ -7,9 +7,13 @@ class Operator(Symbols):
     """
     Represent an operator, like +, *, sin, anything that can be applied to an expression
     """
+    # Store all the instances of Operator, used in the parser
     instances = {}
+    # The deconstruct operator of a repeated operator is used to deconstruct an expression (x+y)^2 -> (x+y)*(x+y)
+    # Mul is the deconstruct operator of Add
+    deconstruct_op_dict = {}
 
-    def __init__(self, name: str, precedence: int, call: Callable, repeated_op: Operator = None):
+    def __init__(self, name: str, precedence: int, call: Callable, repeated_op: BinOperator = None):
         """
         :param name of the operator
         :param precedence: precedence of the operator, higher is better
@@ -24,8 +28,15 @@ class Operator(Symbols):
         self.repeated_op = repeated_op
         Operator.instances[name] = self
 
+        if repeated_op:
+            Operator.deconstruct_op_dict[repeated_op] = self
+
     def __repr__(self):
         return f'{self.name}'
+
+    @property
+    def deconstruct_op(self):
+        return Operator.deconstruct_op_dict.get(self, None)
 
 
 class UnaryOperator(Operator):
@@ -53,7 +64,7 @@ class BinProperties:
     """
 
     def __init__(self, associative: bool, commutative: True,
-                 left_distributivity: Set[str], right_distributivity: Set[str]):
+                 left_distributivity: Set[str], right_distributivity: Set[str], neutral_element=None, absorbing_element=None):
         """
         :param associative: True if the operator is associative
         :param commutative: True if the operator is commutative
@@ -72,18 +83,29 @@ class BinProperties:
         self.commutative = commutative
         self.left_distributive = left_distributivity
         self.right_distributive = right_distributivity
+        self.neutral_element = neutral_element
+        self.absorbing_element = absorbing_element
 
 
 class BinOperator(Operator):
     """
     Represent a binary operator, like +, *, etc...
     all operators that take two arguments
+
     """
 
     # Used to store all the instances of BinOperator, used in the parser
     instances = {}
 
-    def __init__(self, name: str, precedence: int, properties: BinProperties, call: Callable, repeated_op: Operator = None ):
+    def __init__(self, name: str, precedence: int, properties: BinProperties, call: Callable, repeated_op: BinOperator = None):
+        """
+        :param name: name of the operator
+        :param precedence: precedence of the operator, higher is better
+        :param properties: properties of the operator
+        :param call: function to apply the operator
+        :param repeated_op: if you repeat the operator what do you get ? (for exemple a+a+a+a -> 4*a, the repeated_op of Add is Mul)
+        :param deconstruct_op: if you deconstruct the operator what do you get ? (for exemple 4*a -> a+a+a+a, the deconstruct_op of Mul is Add)
+        """
         BinOperator.instances[name] = self
         super().__init__(name, precedence, call, repeated_op)
         self.properties = properties
@@ -99,13 +121,13 @@ class BinOperator(Operator):
 """
 Generic operators
 """
-ExpProperties = BinProperties(False, False, set(), set())
+ExpProperties = BinProperties(False, False, set(), set(), 1)
 Exp = BinOperator('^', 4, ExpProperties, lambda x, y: x ** y)
 
-MulProperties = BinProperties(True, True, {'+'}, {'+'})
+MulProperties = BinProperties(True, True, {'+'}, {'+'}, 1, 0)
 Mul = BinOperator('*', 3, MulProperties, lambda x, y: x * y, Exp)
 
-AddProperties = BinProperties(True, True, set(), set())
+AddProperties = BinProperties(True, True, set(), set(), 0)
 Add = BinOperator('+', 2, AddProperties, lambda x, y: x + y, Mul)
 
 
