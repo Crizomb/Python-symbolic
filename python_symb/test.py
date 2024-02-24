@@ -80,7 +80,7 @@ def test_regroup(print_result=False):
 
 
 def test_newton_bin(print_result=False):
-    expr = (x+y)**2
+    expr = (x+y)**4
     ungrouped = ungroup(expr, Exp)
     expanded = expand(ungrouped)
     expand_grouped = regroup(expanded, Add)
@@ -95,11 +95,11 @@ def test_newton_bin(print_result=False):
         print(f"expanded: {expanded.to_infix_str()}")
         print(f"expand_grouped: {expand_grouped.to_infix_str()}")
 
-    #assert expand_grouped == Expr(Add, [Expr(Exp, [Expr(x), Expr(4)]),Expr(Add, [Expr(Mul, [Expr(4),Expr(Mul, [Expr(Exp, [Expr(x), Expr(3)]),Expr(y)])]),Expr(Add, [Expr(Mul, [Expr(6),Expr(Mul, [Expr(Exp, [Expr(x), Expr(2)]),Expr(Exp, [Expr(y), Expr(2)])])]),Expr(Add, [Expr(Mul, [Expr(4),Expr(Mul, [Expr(x),Expr(Exp, [Expr(y), Expr(3)])])]),Expr(Exp, [Expr(y), Expr(4)])])])])])
+    assert expand_grouped == Expr(Add, [Expr(Exp, [Expr(x), Expr(4)]),Expr(Add, [Expr(Mul, [Expr(4),Expr(Mul, [Expr(Exp, [Expr(x), Expr(3)]),Expr(y)])]),Expr(Add, [Expr(Mul, [Expr(6),Expr(Mul, [Expr(Exp, [Expr(x), Expr(2)]),Expr(Exp, [Expr(y), Expr(2)])])]),Expr(Add, [Expr(Mul, [Expr(4),Expr(Mul, [Expr(x),Expr(Exp, [Expr(y), Expr(3)])])]),Expr(Exp, [Expr(y), Expr(4)])])])])])
 
 
 def test_big_bin_for_performance(print_result=False):
-    expr = (x+y)**12
+    expr = (x+y)**17
     print("a")
     ungrouped = ungroup(expr, Exp)
     print("b")
@@ -116,12 +116,12 @@ def test_big_bin_for_performance(print_result=False):
         print("---")
         print(f"expr: {expr.to_infix_str()}")
         print(f"ungrouped: {ungrouped.to_infix_str()}")
-        print(f"expanded: {expanded.to_infix_str()}")
+        #print(f"expanded: {expanded.to_infix_str()}")
         print(f"expand_grouped: {expand_grouped.to_infix_str()}")
 
 
 def test_trinomial(print_result=False):
-    expr = (x+y+z)**3
+    expr = (x+y+z+a)**2
     ungrouped = ungroup(expr, Exp)
     expanded = expand(ungrouped)
     expand_grouped = regroup(expanded, Add)
