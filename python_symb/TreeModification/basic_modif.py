@@ -8,6 +8,7 @@ Number = Union[int, float]
 
 
 def expand(expr: Expr) -> Expr:
+
     """
     Expand an expression
 
@@ -23,14 +24,22 @@ def expand(expr: Expr) -> Expr:
         return expr
 
     match expr:
+
         case Expr(BinOperator() as Op1, [Expr(BinOperator() as Op2, op2_children), right]) if Op2.name in Op1.properties.left_distributive:
-            return expand(Expr(Op2, [Expr(Op1, [expand(op2_child), expand(right)]) for op2_child in op2_children]))
+            expanded_right = expand(right)
+            return expand(Expr(Op2, [Expr(Op1, [op2_child, expanded_right]) for op2_child in op2_children]))
 
         case Expr(BinOperator() as Op1, [left, Expr(BinOperator() as Op2, op2_children)]) if Op2.name in Op1.properties.right_distributive:
-            return expand(Expr(Op2, [Expr(Op1, [expand(left), expand(op2_child)]) for op2_child in op2_children]))
+            expanded_left = expand(left)
+            return expand(Expr(Op2, [Expr(Op1, [expanded_left, op2_child]) for op2_child in op2_children]))
 
         case Expr(BinOperator() as Op, [left, right]):
-            return Expr(Op, [expand(left), expand(right)])
+            left_leaf, right_leaf = left.is_leaf, right.is_leaf
+            if not left_leaf:
+                left = expand(left)
+            if not right_leaf:
+                right = expand(right)
+            return Expr(Op, [left, right])
 
     return expr
 

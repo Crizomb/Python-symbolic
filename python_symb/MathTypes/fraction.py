@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Iterable, Generator
-from python_symb.IndependantTools.tools import gcd
+from python_symb.IndependantTools.math_tools import gcd
 
 
 class Fraction:

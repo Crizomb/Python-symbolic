@@ -14,6 +14,7 @@ from python_symb.Parsing.parse import infix_str_to_postfix
 class Expr(Tree):
     """
     A class to represent an expression tree
+    is immutable
 
     value: the value of the node
     children: the subtrees of the root (Default : None)
@@ -23,19 +24,39 @@ class Expr(Tree):
     Expr(Mul, [Expr(5), Expr(Expr(Add, [Expr(2), Expr(3)]))])
 
     """
+    __slots__ = ['value', 'children', '_is_frozen', '_hash']
     __match_args__ = ('value', 'children')
 
-    def __init__(self, value, children=None):
+    def __init__(self, value, children=None, debug=False):
         from python_symb.MathTypes.operator_file import BinOperator, UnaryOperator
+        self._is_frozen = False
         super().__init__(value, children if children else [])
-        assert all([isinstance(child, Expr) for child in self.children]), f'Invalid children: {self.children} all child should be Expr'
+        self._is_frozen = True
+        self._hash = None
 
-        match value:
-            case BinOperator() as op:
-                assert len(self.children) == 2, f'Invalid number of children for BinOperator{op}: {len(self.children)}'
+        if debug:
 
-            case UnaryOperator() as op:
-                assert len(self.children) == 1, f'Invalid number of children for UnaryOperator{op}: {len(self.children)}'
+            assert all([isinstance(child, Expr) for child in
+                        self.children]), f'Invalid children: {self.children} all child should be Expr'
+
+            match value:
+                case BinOperator() as op:
+                    assert len(self.children) == 2, f'Invalid number of children for BinOperator{op}: {len(self.children)}'
+
+                case UnaryOperator() as op:
+                    assert len(self.children) == 1, f'Invalid number of children for UnaryOperator{op}: {len(self.children)}'
+
+    def __setattr__(self, key, value):
+        if key == "_hash" or key == "_is_frozen":
+            super().__setattr__(key, value)
+        elif getattr(self, "_is_frozen", True):
+            raise TypeError(f"{self.__class__.__name__} is immutable")
+        super().__setattr__(key, value)
+
+    def __delattr__(self, item):
+        if getattr(self, "_is_frozen", True):
+            raise TypeError(f"{self.__class__.__name__} is immutable")
+        super().__delattr__(item)
 
 
     @staticmethod
@@ -91,7 +112,6 @@ class Expr(Tree):
 
 
 
-
     @staticmethod
     def bin_op_constructor(self, other, op):
         """
@@ -139,19 +159,26 @@ class Expr(Tree):
         Two equivalent expressions (without more modification like factorisation, or expanding) should have the same hash
         see test_eq
         """
+        if self._hash:
+            return self._hash
+
         match self:
 
             case Expr(value) if self.is_leaf:
-                return hash(value)
+                self._hash = hash(value)
+                return self._hash
 
             case Expr(UnaryOperator() as op, [child]):
-                return hash(op.name + str(hash(child)))
+                self._hash = hash(op.name + str(hash(child)))
+                return self._hash
 
             case Expr(BinOperator() as op, [left, right]):
                 if op.properties.commutative and op.properties.associative:
-                    return hash(op.name) + hash(left) + hash(right)
+                    self._hash = hash(op.name) + hash(left) + hash(right)
+                    return self._hash
                 else:
-                    return hash(op.name) + hash(str(hash(left)) + str(hash(right)))
+                    self._hash = hash(op.name) + hash(str(hash(left)) + str(hash(right)))
+                    return self._hash
 
             case _:
                 print(f'Invalid type: {type(self)}')
