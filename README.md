@@ -9,12 +9,12 @@ Python-symbolic is a small project written in pure Python that allows you to per
 - Expression tree implementation
 - Transformation of infix strings to expression trees
 - Visualization of expression trees
+- Expansion of expressions (e.g., `a*(a+b)` to `a^2 + ab`)
 
 ### To-Do:
 - Create a type (BinOperator) for exponents
 - Implement complex numbers
 - Modify expression trees, including:
-  - Expansion of expressions (e.g., `a*(a+b)` to `a^2 + ab`)
   - Factorization of expressions (e.g., `a^2 + 2ab + b^2` to `(a+b)^2`)
   - Easy simplification (e.g., `sin(x)² + cos(x)²` to `1`)
 - Define calculus types:
